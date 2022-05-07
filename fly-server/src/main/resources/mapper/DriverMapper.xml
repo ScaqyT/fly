@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xxxx.flyserver.mapper.DriverMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.xxxx.flyserver.pojo.Driver">
+        <id column="id" property="id" />
+        <result column="name" property="name" />
+        <result column="state" property="state" />
+        <result column="age" property="age" />
+        <result column="weigth" property="weigth" />
+        <result column="high" property="high" />
+        <result column="address" property="address" />
+        <result column="telphone" property="telphone" />
+        <result column="sos_phone" property="sosPhone" />
+        <result column="sos_name" property="sosName" />
+        <result column="image" property="image" />
+        <result column="sex" property="sex" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, name, state, age, weigth, high, address, telphone, sos_phone, sos_name,image,sex
+    </sql>
+
+    <select id="getDriverByPage" resultMap="BaseResultMap">
+        select
+            *
+        from t_driver
+        where
+        name like concat('%',#{name},'%')
+        and state like concat('%',#{state},'%')
+            <if test="id != null">
+              and  id = #{id}
+            </if>
+        order by id
+    </select>
+</mapper>

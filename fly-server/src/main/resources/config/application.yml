@@ -1,0 +1,68 @@
+server:
+  port: 2022
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/fly?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2b8
+    username: root
+    password: root
+    hikari:
+      pool-name: DateHikariCP
+      minimum-idle: 5
+      idle-timeout: 180000
+      maximum-pool-size: 10
+      auto-commit: true
+      max-lifetime: 180000
+      connection-timeout: 30000
+      connection-test-query: SELECT 1
+
+  # Redis配置
+  redis:
+    timeout: 10000ms                        # 连接超时时间
+    host: 127.0.0.1                         # Redis服务器地址
+    port: 6379                              # Redis服务器端口
+    database: 2                             # 选择哪个库，默认0库
+    lettuce:
+      pool:
+        max-active: 1024                    # 最大连接数，默认 8
+        max-wait: 10000ms                   # 最大连接阻塞等待时间，单位毫秒，默认 -1
+        max-idle: 200                       # 最大空闲连接，默认 8
+        min-idle: 5                          # 最小空闲连接，默认 0
+
+  #rabbitmq配置
+  rabbitmq:
+    username: admin
+    password: admin
+    host: 127.0.0.1
+    port: 5672
+    #    消息确认回调
+    publisher-confirm-type: correlated
+    #    消息失败回调
+    publisher-returns: true
+
+  #热部署开启
+  devtools:
+    restart:
+      enabled: true
+
+
+mybatis-plus:
+  mapper-locations: classpath*:/mapper/*Mapper.xml
+  type-aliases-package: com.example.server.pojo
+  configuration:
+    map-underscore-to-camel-case: false
+
+logging:
+  level:
+    com.example.server.mapper: debug
+
+jwt:
+  # JWT存储的请求头
+  tokenHeader: Authorization
+  # JWT 加解密使用的密钥
+  secret: fly-secret
+  # JWT的超期限时间（60*60*24）
+  expiration: 604800
+  # JWT 负载中拿到开头
+  tokenHead: Bearer

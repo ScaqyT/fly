@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xxxx.flyserver.mapper.WarehouseMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.xxxx.flyserver.pojo.Warehouse">
+        <id column="id" property="id" />
+        <result column="name" property="name" />
+        <result column="locationId" property="locationId" />
+        <result column="area" property="area" />
+        <result column="type" property="type" />
+        <result column="Uid" property="Uid" />
+        <result column="Wphone" property="Wphone"/>
+        <result column="address" property="address"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, name, locationId, area, type, Uid , Wphone , address
+    </sql>
+
+    <resultMap id="WarehouseInfo" type="com.xxxx.flyserver.pojo.Warehouse" extends="BaseResultMap">
+        <association property="location" javaType="com.xxxx.flyserver.pojo.Location">
+            <id column="lid" property="id"/>
+            <result column="lname" property="name"/>
+        </association>
+        <association property="employee" javaType="com.xxxx.flyserver.pojo.Employee">
+            <id column="eid" property="id"/>
+            <result column="ename" property="name"/>
+            <result column="ephone" property="phone"/>
+            <result column="eaddress" property="address"/>
+            <result column="etype" property="type"/>
+        </association>
+        <association property="employeeType" javaType="com.xxxx.flyserver.pojo.EmployeeType">
+            <id column="etid" property="id"/>
+            <result column="etname" property="name"/>
+        </association>
+    </resultMap>
+
+    <select id="getWarehouse" resultMap="WarehouseInfo">
+        SELECT
+                w.*,
+                l.id AS lid,
+                l.NAME AS lname,
+                e.id AS eid,
+                e.NAME AS ename,
+                e.phone AS ephone,
+                e.address AS eaddress,
+                e.type AS etype,
+                et.id AS etid,
+                et.NAME AS etname
+        FROM
+                t_warehouse AS w,
+                t_location AS l,
+                t_employee AS e,
+                t_employee_type AS et
+        WHERE
+                w.locationId = l.id
+          AND w.Uid = e.id
+          AND e.type = et.id
+          <if test="id != null">
+              AND w.id = #{id}
+          </if>
+    </select>
+</mapper>

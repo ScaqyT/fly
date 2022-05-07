@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xxxx.flyserver.mapper.PoMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.xxxx.flyserver.pojo.Po">
+        <id column="id" property="id" />
+        <result column="number" property="number" />
+        <result column="supplierId" property="supplierId" />
+        <result column="state" property="state" />
+        <result column="quality" property="quality" />
+        <result column="name" property="name" />
+        <result column="createdate" property="createdate" />
+        <result column="money" property="money" />
+        <result column="warehouseId" property="warehouseId" />
+        <result column="addressId" property="addressId" />
+        <result column="dAddress" property="dAddress" />
+        <result column="chargeMode" property="chargeMode" />
+        <result column="oid" property="oid"/>
+        <result column="did" property="did"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, number, supplierId, state, quality, name, createdate, money, warehouseId, oid, did
+    </sql>
+
+    <resultMap id="Po" type="com.xxxx.flyserver.pojo.Po" extends="BaseResultMap">
+        <association property="stateName" javaType="com.xxxx.flyserver.pojo.State">
+            <id column="sid" property="id"/>
+            <result column="sname" property="name"/>
+        </association>
+        <association property="supplier" javaType="com.xxxx.flyserver.pojo.Supplier">
+            <id column="suid" property="id"/>
+            <result column="suname" property="name"/>
+            <result column="suphone" property="phone"/>
+            <result column="suaddress" property="address"/>
+        </association>
+    </resultMap>
+    <select id="getAllPo" resultMap="Po">
+        SELECT
+                p.*,
+                su.id AS suid,
+                su.`name` AS suname,
+                su.phone AS suphone,
+                su.address AS suaddress,
+                s.id    AS  sid,
+                s.name  AS  sname
+        FROM
+                t_po AS p,
+                t_supplier AS su,
+                t_state as s
+        WHERE
+                p.supplierId = su.id
+        AND     p.state = s.id
+        <if test="orderId != null">
+            AND p.id = #{orderId}
+        </if>
+        <if test="orderState != null">
+            AND p.state = #{orderState}
+        </if>
+        <if test="oid != null">
+            AND p.oid = #{oid}
+        </if>
+    </select>
+</mapper>

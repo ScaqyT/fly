@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xxxx.flyserver.mapper.GoodsMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.xxxx.flyserver.pojo.Goods">
+        <id column="id" property="id" />
+        <result column="name" property="name" />
+        <result column="type" property="type" />
+        <result column="weight" property="weight" />
+        <result column="volume" property="volume" />
+        <result column="quantity" property="quantity" />
+        <result column="remark" property="remark" />
+        <result column="originId" property="originId" />
+        <result column="origin" property="origin" />
+        <result column="destinationId" property="destinationId" />
+        <result column="destination" property="destination" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, name, type, weight, volume, quantity, remark, originId, origin, destinationId, destination
+    </sql>
+
+    <resultMap id="Goods" type="com.xxxx.flyserver.pojo.Goods" extends="BaseResultMap">
+        <association property="goodsType" javaType="com.xxxx.flyserver.pojo.GoodsType">
+            <id column="gtid" property="id"/>
+            <result column="gtname" property="name"/>
+            <result column="gtparentId" property="parentId"/>
+        </association>
+        <association property="o" javaType="com.xxxx.flyserver.pojo.Address">
+            <id column="oid" property="id"/>
+            <result column="oname" property="name"/>
+            <result column="oparentId" property="parentId"/>
+            <result column="otype" property="type"/>
+        </association>
+        <association property="d" javaType="com.xxxx.flyserver.pojo.Address">
+            <id column="did" property="id"/>
+            <result column="dname" property="name"/>
+            <result column="dparentId" property="parentId"/>
+            <result column="dtype" property="type"/>
+        </association>
+     </resultMap>
+    <select id="getAllGoods" resultMap="Goods">
+        SELECT
+                g.*,
+                gt.id AS gtid,
+                gt.`name` AS gtname,
+                gt.parentId AS gtparentId,
+                a1.id as oid, a1.name as oname, a1.parentId as oparentId, a1.type as otype,
+                a2.id as did, a2.name as dname, a2.parentId as dparentId, a2.type as dtype
+        FROM
+                t_goods AS g,
+                t_goods_type AS gt,
+                t_address AS a1,
+                t_address AS a2
+        WHERE
+                g.type = gt.id
+            AND g.originId = a1.id
+            AND g.destinationId = a2.id
+        <if test="goodsId != null">
+            AND g.id = #{goodsId}
+        </if>
+        <if test="goodsType != null">
+            AND g.type = #{goodsType}
+        </if>
+        <if test="goodsName != null || goodsName != ''">
+            AND g.name like concat('%',#{goodsName},'%')
+        </if>
+        order by g.id
+    </select>
+</mapper>

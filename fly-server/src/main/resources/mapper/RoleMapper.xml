@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xxxx.flyserver.mapper.RoleMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.xxxx.flyserver.pojo.Role">
+        <id column="id" property="id" />
+        <result column="name" property="name" />
+        <result column="nameZh" property="nameZh" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, name, nameZh
+    </sql>
+
+    <select id="getRoles" resultType="com.xxxx.flyserver.pojo.Role">
+        SELECT
+                r.id,
+                r.NAME,
+                r.nameZh
+        FROM
+                t_role AS r
+                        LEFT JOIN t_admin_role AS ar ON r.id = ar.rid
+        WHERE
+                ar.adminId = 1
+    </select>
+
+    <resultMap id="Menus" type="com.xxxx.flyserver.pojo.Menu">
+        <id column="id1" property="id"/>
+        <result column="name1" property="name"/>
+        <collection property="children" ofType="com.xxxx.flyserver.pojo.Menu">
+            <id column="id2" property="id"/>
+            <result column="name2" property="name"/>
+        </collection>
+    </resultMap>
+    <select id="getAllMenus" resultMap="Menus">
+        SELECT
+                m1.id AS id1,
+                m1.name AS name1,
+                m2.id AS id2,
+                m2.NAME AS name2
+        FROM
+                t_menu AS m1
+                LEFT JOIN t_menu AS m2 ON m1.id = m2.parentId
+        WHERE
+                m2.`enable` =1
+    </select>
+
+    <select id="getMenuWithRole" resultMap="Menus">
+        SELECT
+                m1.id AS id1,
+                m1.NAME AS name1,
+                m2.id AS id2,
+                m2.NAME AS name2
+        FROM
+                t_menu AS m1,
+                t_menu AS m2,
+                t_menu_role AS mr,
+                t_role AS r
+        WHERE
+                m1.id = m2.parentId
+          AND m2.id = mr.mid
+          AND r.id = mr.rid
+          AND r.id = #{rid}
+        ORDER BY
+                m2.id
+    </select>
+</mapper>

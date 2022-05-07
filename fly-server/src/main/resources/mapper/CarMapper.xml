@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xxxx.flyserver.mapper.CarMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.xxxx.flyserver.pojo.Car">
+        <id column="id" property="id" />
+        <result column="name" property="name" />
+        <result column="cartype" property="cartype" />
+        <result column="price" property="price" />
+        <result column="state" property="state" />
+        <result column="location" property="location" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, name, cartype, price, state, location
+    </sql>
+
+    <resultMap id="CarInfo" type="com.xxxx.flyserver.pojo.Car" extends="BaseResultMap">
+        <association property="carState" javaType="com.xxxx.flyserver.pojo.CarState">
+            <id column="csid" property="id"/>
+            <result column="csname" property="name"/>
+        </association>
+        <association property="Type" javaType="com.xxxx.flyserver.pojo.CarType">
+            <id column="ctid" property="id"/>
+            <result column="cttype" property="type"/>
+            <result column="ctquality" property="quality"/>
+            <result column="ctlength" property="length"/>
+            <result column="ctwidth" property="width"/>
+            <result column="cthigh" property="high"/>
+        </association>
+    </resultMap>
+    <select id="getCarByPage" resultMap="CarInfo">
+        SELECT
+        c.*,
+        cs.id AS csid,
+        cs.`name` AS csname,
+        ct.id AS ctid,
+        ct.type AS cttype,
+        ct.quality as ctquality,
+        ct.length as ctlength,
+        ct.width as ctwidth,
+        ct.high as cthigh
+        FROM
+        t_car AS c,
+        t_car_state AS cs,
+        t_car_type AS ct
+        WHERE c.state = cs.id
+        AND   c.cartype = ct.id
+        <if test="name != null or name != ''">
+            AND   c.`name` LIKE CONCAT( '%', #{name}, '%' )
+        </if>
+        <if test="typeId != null">
+            AND   c.cartype = #{typeId}
+        </if>
+        <if test="price != null">
+            AND   c.price = #{price}
+        </if>
+        <if test="stateId!=null">
+            AND   c.state = #{stateId}
+        </if>
+        <if test="locationId != null">
+            AND   c.location = #{locationId}
+        </if>
+        order by c.id
+    </select>
+</mapper>

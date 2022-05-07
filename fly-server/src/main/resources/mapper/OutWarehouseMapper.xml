@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xxxx.flyserver.mapper.OutWarehouseMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.xxxx.flyserver.pojo.OutWarehouse">
+        <id column="id" property="id" />
+        <result column="customerId" property="customerId" />
+        <result column="name" property="name" />
+        <result column="price" property="price" />
+        <result column="quantity" property="quantity" />
+        <result column="date" property="date" />
+        <result column="goodsId" property="goodsId" />
+        <result column="warehouseId" property="warehouseId" />
+        <result column="state" property="state"/>
+        <result column="orderId" property="orderId"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, customerId, name, price, quantity, date, goodsId, warehouseId, state, orderId
+    </sql>
+
+    <resultMap id="OutWarehouse" type="com.xxxx.flyserver.pojo.OutWarehouse" extends="BaseResultMap">
+        <collection property="customer" ofType="com.xxxx.flyserver.pojo.Customer">
+            <id column="cid" property="id"/>
+            <result column="cname" property="name"/>
+            <result column="cphone" property="phone"/>
+            <result column="caddress" property="address"/>
+        </collection>
+        <collection property="goods" ofType="com.xxxx.flyserver.pojo.Goods">
+            <id column="gid" property="id"/>
+            <result column="gname" property="name"/>
+            <result column="gquatity" property="quantity"/>
+        </collection>
+        <collection property="warehouse" ofType="com.xxxx.flyserver.pojo.Warehouse">
+            <id column="wid" property="id"/>
+            <result column="wname" property="name"/>
+        </collection>
+     </resultMap>
+    <select id="getOutWarehouse" resultMap="OutWarehouse">
+        SELECT
+                ow.*,
+                c.id as cid, c.name as cname, c.phone as cphone, c.address as caddress,
+                g.id as gid, g.name as gname, g.quantity as gquatity,
+                w.id as wid, w.name as wname
+        FROM
+                t_out_warehouse AS ow,
+                t_customer AS c,
+                t_goods AS g,
+                t_warehouse AS w
+        WHERE
+                ow.customerId = w.id
+          AND ow.goodsId = g.id
+          AND ow.customerId = c.id
+        <if test="id != null">
+            AND ow.id = #{id}
+        </if>
+        <if test="otherId != null">
+            AND ow.customerId = #{otherId}
+        </if>
+        <if test="name != null || name != ''">
+            AND ow.name LIKE CONCAT('%',#{name},'%')
+        </if>
+        ORDER BY
+                ow.id
+    </select>
+</mapper>

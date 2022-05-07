@@ -1,0 +1,70 @@
+package com.xxxx.flyserver.controller;
+
+
+import com.xxxx.flyserver.pojo.*;
+import com.xxxx.flyserver.service.ICarService;
+import com.xxxx.flyserver.service.IDriverService;
+import com.xxxx.flyserver.service.IOperationService;
+import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+/**
+ * <p>
+ * 车辆运营 前端控制器
+ * </p>
+ *
+ * @author cxf
+ * @since 2022-02-21
+ */
+@RestController
+@RequestMapping("/car/operation")
+public class OperationController {
+
+    @Autowired
+    private IOperationService operationService;
+
+    @Autowired
+    private PoController poController;
+
+    @Autowired
+    private OrdersController ordersController;
+
+
+    @ApiOperation(value = "获取托运单")
+    @GetMapping("/")
+    public List<Operation> getOperation(){
+        return operationService.getOperation();
+    }
+
+    @ApiOperation(value = "获取托运明细")
+    @GetMapping("/goods")
+    public List<Goods> getOperationWithGoods(Integer oid){
+        return operationService.getOperationWithGoods(oid);
+    }
+
+    @ApiOperation(value = "添加托运单")
+    @PostMapping("/")
+    public RespBean addOperation(@RequestBody Operation operation){
+        return operationService.addOperation(operation);
+    }
+
+    @ApiOperation(value = "获取提货单")
+    @GetMapping("/po")
+    public List<Po> getPo(Integer oid){
+        OrderSearch orderSearch = new OrderSearch();
+        orderSearch.setOid(oid);
+        return poController.getAllPo(orderSearch);
+    }
+
+    @ApiOperation(value = "获取出货单")
+    @GetMapping("/o")
+    public List<Orders> getOrders(Integer oid){
+        OrderSearch orderSearch = new OrderSearch();
+        orderSearch.setOid(oid);
+        return ordersController.getAllOrders(orderSearch);
+    }
+
+}

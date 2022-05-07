@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xxxx.flyserver.mapper.OperationMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.xxxx.flyserver.pojo.Operation">
+        <id column="id" property="id" />
+        <result column="carId" property="carId" />
+        <result column="way" property="way" />
+        <result column="price" property="price" />
+        <result column="customerId" property="customerId" />
+        <result column="chargeMode" property="chargeMode" />
+        <result column="qMoney" property="qMoney" />
+        <result column="sMoney" property="sMoney" />
+        <result column="yMoney" property="yMoney" />
+        <result column="state" property="state"/>
+        <result column="destination" property="destination"/>
+        <result column="destinationId" property="destinationId"/>
+        <result column="origin" property="origin"/>
+        <result column="originId" property="originId"/>
+        <result column="orderId" property="orderId"/>
+        <result column="poId" property="poId"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, carId, way, price, customerId, state, destination, destinationId, origin, originId,QMoney,SMoney,YMoney
+    </sql>
+
+    <resultMap id="Operation" type="com.xxxx.flyserver.pojo.Operation" extends="BaseResultMap">
+        <association property="customer" javaType="com.xxxx.flyserver.pojo.Customer">
+            <id column="cusid" property="id"/>
+            <result column="cusname" property="name"/>
+            <result column="cusaddress" property="address"/>
+            <result column="cusphone" property="phone"/>
+        </association>
+        <association property="supplier" javaType="com.xxxx.flyserver.pojo.Supplier">
+            <id column="supid" property="id"/>
+            <result column="supname" property="name"/>
+            <result column="supaddress" property="address"/>
+            <result column="supphone" property="phone"/>
+        </association>
+        <association property="c" javaType="com.xxxx.flyserver.pojo.Chargemode">
+            <id column="cid" property="id"/>
+            <result column="cname" property="name"/>
+            <result column="ccost" property="cost"/>
+        </association>
+        <association property="s" javaType="com.xxxx.flyserver.pojo.State">
+            <id column="sid" property="id"/>
+            <result column="sname" property="name"/>
+        </association>
+        <association property="o" javaType="com.xxxx.flyserver.pojo.Address">
+            <id column="a1id" property="id"/>
+            <result column="a1name" property="name"/>
+            <result column="a1type" property="type"/>
+            <result column="a1parentId" property="parentId"/>
+        </association>
+        <association property="d" javaType="com.xxxx.flyserver.pojo.Address">
+            <id column="a2id" property="id"/>
+            <result column="a2name" property="name"/>
+            <result column="a2type" property="type"/>
+            <result column="a2parentId" property="parentId"/>
+        </association>
+    </resultMap>
+    <select id="getOperation" resultMap="Operation">
+        SELECT
+                o.*,
+                cus.id as cusid,
+                cus.name as cusname,
+                cus.phone as cusphone,
+                cus.address as cusaddress,
+                sup.id as supid,
+                sup.name as supname,
+                sup.phone as supphone,
+                sup.address as supaddress,
+                s.id as sid,s.name as sname,
+                a1.id as a1id, a1.name as a1name, a1.parentId as a1parentId, a1.type as a1type,
+                a2.id as a2id, a2.name as a2name, a2.parentId as a2parentId, a2.type as a2type,
+                c.id as cid, c.name as cname, c.cost as ccost
+        FROM
+                t_operation AS o,
+                t_state AS s,
+                t_address AS a1,
+                t_address AS a2,
+                t_chargemode AS c ,
+                t_customer AS cus,
+                t_supplier AS sup,
+                t_op_goods AS og,
+                t_goods AS g
+        WHERE sup.id = o.supplierId
+            AND cus.id = o.customerId
+            AND a1.id = o.originId
+            AND a2.id = o.destinationId
+            AND c.id = o.chargeMode
+            AND s.id = o.state
+        order by o.id
+    </select>
+
+
+    <select id="addOperation" statementType="CALLABLE">
+        call addOperation(#{supplierId,jdbcType=INTEGER,mode=IN},#{customerId,jdbcType=INTEGER,mode=IN},
+                          #{chargeMode,jdbcType=INTEGER,mode=IN},
+                          #{QMoney,jdbcType=INTEGER,mode=IN},#{SMoney,jdbcType=INTEGER,mode=IN},
+                          #{YMoney,jdbcType=INTEGER,mode=IN},#{destinationId,jdbcType=INTEGER,mode=IN},
+                          #{destination,jdbcType=VARCHAR,mode=IN},#{originId,jdbcType=INTEGER,mode=IN},
+                          #{origin,jdbcType=VARCHAR,mode=IN},#{result,jdbcType=INTEGER,mode=OUT})
+    </select>
+
+
+<!--    获取托运明细（托运单的货物）-->
+    <select id="getOperationWithGoods" resultType="com.xxxx.flyserver.pojo.Goods" >
+        SELECT
+                g.*
+        FROM
+                t_operation AS o,
+                t_op_goods AS og,
+                t_goods AS g
+        WHERE
+                o.id = #{oid}
+          AND og.oid = o.id
+          AND og.gid = g.id
+    </select>
+</mapper>

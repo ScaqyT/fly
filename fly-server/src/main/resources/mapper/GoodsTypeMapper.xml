@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xxxx.flyserver.mapper.GoodsTypeMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.xxxx.flyserver.pojo.GoodsType">
+        <id column="id" property="id" />
+        <result column="name" property="name" />
+        <result column="parentId" property="parentId"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, name , parentId
+    </sql>
+
+    <resultMap id="GoodsType" type="com.xxxx.flyserver.pojo.GoodsType" extends="BaseResultMap">
+        <collection property="children" ofType="com.xxxx.flyserver.pojo.GoodsType">
+            <id column="gtid2" property="id"/>
+            <result column="gtname2" property="name"/>
+            <result column="gtpId2" property="parentId"/>
+        </collection>
+    </resultMap>
+    <select id="getGoodsType" resultMap="GoodsType">
+        SELECT
+                gt1.*,
+                gt2.id AS gtid2,
+                gt2.`name` AS gtname2,
+                gt2.parentId AS gtpId2
+        FROM
+                t_goods_type AS gt1,
+                t_goods_type AS gt2
+        WHERE
+                gt1.id = gt2.parentId
+    </select>
+</mapper>
