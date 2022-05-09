@@ -67,6 +67,9 @@
         from t_menu as m1
              RIGHT JOIN t_menu_role as mr on m1.id=mr.mid
              RIGHT JOIN t_role as r on r.id = mr.rid
+        <if test="rid != null">
+            where r.id = #{rid}
+        </if>
         order by m1.id
     </select>
 

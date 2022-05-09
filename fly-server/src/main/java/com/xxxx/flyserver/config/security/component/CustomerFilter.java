@@ -4,6 +4,7 @@ import com.xxxx.flyserver.mapper.MenuMapper;
 import com.xxxx.flyserver.pojo.Menu;
 import com.xxxx.flyserver.pojo.Role;
 import com.xxxx.flyserver.service.IMenuService;
+import com.xxxx.flyserver.util.AdminUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.access.SecurityConfig;
@@ -44,6 +45,7 @@ public class CustomerFilter implements FilterInvocationSecurityMetadataSource {
                 }
             }
         }
+
         //没匹配的url默认为登录即可访问
         return SecurityConfig.createList("ROLE_LOGIN");
     }

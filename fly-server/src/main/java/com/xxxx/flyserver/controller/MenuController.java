@@ -2,13 +2,12 @@ package com.xxxx.flyserver.controller;
 
 
 import com.xxxx.flyserver.pojo.Menu;
+import com.xxxx.flyserver.pojo.RespBean;
 import com.xxxx.flyserver.service.IMenuService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -32,6 +31,23 @@ public class MenuController {
         return menuService.getMenuWithAdminId();
     }
 
+    @ApiOperation(value = "更新菜单")
+    @PutMapping("/menu")
+    public RespBean updateMenu(@RequestBody Menu menu){
+        return menuService.updateMenu(menu);
+    }
+
+    @ApiOperation(value = "添加菜单")
+    @PostMapping("/menu")
+    public RespBean addMenu(@RequestBody Menu menu){
+        return menuService.addMenu(menu);
+    }
+
+    @ApiOperation(value = "删除菜单")
+    @PutMapping("/menu/{id}")
+    public RespBean deleteMenu(@PathVariable("id") Integer id){
+        return menuService.deleteMenu(id);
+    }
 
 
 

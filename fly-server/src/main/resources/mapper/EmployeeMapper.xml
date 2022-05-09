@@ -16,4 +16,7 @@
         id, type, name, phone, address
     </sql>
 
+    <select id="getAllEmp" resultMap="BaseResultMap">
+        select * from t_employee;
+    </select>
 </mapper>

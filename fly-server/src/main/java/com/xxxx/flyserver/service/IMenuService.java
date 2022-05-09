@@ -2,6 +2,7 @@ package com.xxxx.flyserver.service;
 
 import com.xxxx.flyserver.pojo.Menu;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.xxxx.flyserver.pojo.RespBean;
 
 import java.util.List;
 
@@ -31,4 +32,10 @@ public interface IMenuService extends IService<Menu> {
      * @return
      */
     List<Menu> getAllMenus();
+
+    RespBean updateMenu(Menu menu);
+
+    RespBean addMenu(Menu menu);
+
+    RespBean deleteMenu(Integer id);
 }

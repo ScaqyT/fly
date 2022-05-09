@@ -25,10 +25,6 @@ import java.util.List;
  **/
 @RestController
 public class LoginController {
-
-    @Autowired
-    private RedisUtil redisUtil;
-
     @Autowired
     private IAdminService adminService;
 

@@ -70,27 +70,26 @@ public class AdminServiceImpl extends ServiceImpl<AdminMapper, Admin> implements
 
     @Override
     public RespBean login(AdminLoginParam adminLoginParam, HttpServletRequest request) {
-//        String captcha = (String)request.getSession().getAttribute("captcha");
-//        String code = adminLoginParam.getCode();
-//        //判断验证码是否正确
-//        if(code == null || !captcha.equals(code)) {
-//            throw new RuntimeException("验证码错误，请重新输入");
-//        }
+        String captcha = (String)request.getSession().getAttribute("captcha");
+        String code = adminLoginParam.getCode();
+        //判断验证码是否正确
+        if(code == null || !captcha.equals(code)) {
+            return RespBean.error("验证码错误，请重新输入");
+        }
         //AuthenticationManager 进行用户认证
         UsernamePasswordAuthenticationToken authenticationToken=
                 new UsernamePasswordAuthenticationToken(adminLoginParam.getUsername(),adminLoginParam.getPassword());
         Authentication authentication = authenticationManager.authenticate(authenticationToken);
         //如果认证没通过，给出对应的提示
         if(Objects.isNull(authentication)){
-            return new RespBean(401,"用户名或密码错误",null);
+            return RespBean.error("用户名或密码错误");
         }
-        System.out.println("被执行了");
         //如果验证通过了，使用adminid生成token
         Admin admin = (Admin) authentication.getPrincipal();
         String adminId = admin.getId().toString();
         Object o = redisUtil.get("login:" + adminId);
         if(!Objects.isNull(o)){
-            throw new RuntimeException("登陆失败，用户已登录");
+            return RespBean.error("用户已登陆，请勿再次登陆");
         }
         String token = jwtTokenUtil.generateToken(adminId);
         Map<String,String> tokenMap = new HashMap<>();
@@ -106,10 +105,11 @@ public class AdminServiceImpl extends ServiceImpl<AdminMapper, Admin> implements
     @Override
     public RespBean logout() {
         //获取Security Context Holder中的userid
-        UsernamePasswordAuthenticationToken authentication = (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
-        Admin admin = (Admin) authentication.getPrincipal();
+        Integer adminId = AdminUtils.getAdmin().getId();
+//        UsernamePasswordAuthenticationToken authentication = (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+//        Admin admin = (Admin) authentication.getPrincipal();
         //删除redis中的值
-        redisUtil.del("login:"+admin.getId());
+        redisUtil.del("login:"+adminId);
         return RespBean.success("注销成功");
 
 
