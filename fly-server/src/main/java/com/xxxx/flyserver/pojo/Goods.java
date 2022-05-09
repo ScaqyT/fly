@@ -55,26 +55,29 @@ public class Goods implements Serializable {
     @ApiModelProperty(value = "备注")
     private String remark;
 
-    @ApiModelProperty(value = "起始地详细地址Id")
-    private Integer originId;
+    @ApiModelProperty(value = "托运单ID")
+    private Integer oid;
 
-    @ApiModelProperty(value = "起始地区")
-    @TableField(exist = false)
-    private Address o;
-
-    @ApiModelProperty(value = "起始地详细地址")
-    private String origin;
-
-    @ApiModelProperty(value = "目的地详细地址Id")
-    private Integer destinationId;
-
-    @ApiModelProperty(value = "目的地区")
-    @TableField(exist = false)
-    private Address d;
-
-
-    @ApiModelProperty(value = "目的地详细地址")
-    private String destination;
+//    @ApiModelProperty(value = "起始地详细地址Id")
+//    private Integer originId;
+//
+//    @ApiModelProperty(value = "起始地区")
+//    @TableField(exist = false)
+//    private Address o;
+//
+//    @ApiModelProperty(value = "起始地详细地址")
+//    private String origin;
+//
+//    @ApiModelProperty(value = "目的地详细地址Id")
+//    private Integer destinationId;
+//
+//    @ApiModelProperty(value = "目的地区")
+//    @TableField(exist = false)
+//    private Address d;
+//
+//
+//    @ApiModelProperty(value = "目的地详细地址")
+//    private String destination;
 
 
 }

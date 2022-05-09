@@ -6,7 +6,9 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.xxxx.flyserver.pojo.RespBean;
 import com.xxxx.flyserver.pojo.RespPageBean;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -19,20 +21,20 @@ import java.util.List;
 public interface IOperationService extends IService<Operation> {
 
     /**
-     * 获取车辆运营信息
+     * 获取托运单信息
      * @return
      */
     List<Operation> getOperation();
 
     /**
-     * 添加车辆运营信息
-     * @param operation
+     * 添加托运单信息
+     * @param map
      * @return
      */
-    RespBean addOperation(Operation operation);
+    RespBean addOperation(HashMap<String, Object> map);
 
     /**
-     * 删除车辆运营信息
+     * 删除托运单信息
      * @param id
      * @return
      */

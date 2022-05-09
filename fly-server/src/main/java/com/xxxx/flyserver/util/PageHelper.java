@@ -16,9 +16,9 @@ import java.util.Properties;
  * @author: cxf
  * @create: 2022-04-14 14:13
  **/
-@Slf4j
-@Component
-@Intercepts({@Signature(type = StatementHandler.class,method = "prepare",args = {Connection.class, Integer.class})})
+//@Slf4j
+//@Component
+//@Intercepts({@Signature(type = StatementHandler.class,method = "prepare",args = {Connection.class, Integer.class})})
 public class PageHelper implements Interceptor {
 
     private static final ThreadLocal<Page> localThread = new ThreadLocal<>();
@@ -35,8 +35,7 @@ public class PageHelper implements Interceptor {
             sqlField.set(boundSql,page.getPageSQL(boundSql.getSql()));
             clearPage();
         }
-        log.info("待执行sql"+ boundSql.getSql().replaceAll("\\n","").replaceAll("\\t",""));
-
+//        log.info("待执行sql"+ boundSql.getSql().replaceAll("\\n","").replaceAll("\\t",""));
         return invocation.proceed();
     }
 

@@ -9,7 +9,9 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -47,8 +49,8 @@ public class OperationController {
 
     @ApiOperation(value = "添加托运单")
     @PostMapping("/")
-    public RespBean addOperation(@RequestBody Operation operation){
-        return operationService.addOperation(operation);
+    public RespBean addOperation(@RequestBody HashMap<String,Object> map){
+        return operationService.addOperation(map);
     }
 
     @ApiOperation(value = "获取提货单")

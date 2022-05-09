@@ -40,29 +40,33 @@
     </resultMap>
     <select id="getInWarehouse" resultMap="InWarehouse">
         SELECT
-        iw.*,
-        c.id as cid, c.name as cname, c.phone as cphone, c.address as caddress,
-        g.id as gid, g.name as gname, g.quantity as gquatity,
-        w.id as wid, w.name as wname
+            iw.*,
+            s.id AS sid,
+            s.NAME AS sname,
+            s.phone AS sphone,
+            s.address AS saddress,
+            g.id AS gid,
+            g.NAME AS gname,
+            g.quantity AS gquatity,
+            w.id AS wid,
+            w.NAME AS wname
         FROM
-        t_in_warehouse AS iw,
-        t_customer AS c,
-        t_goods AS g,
-        t_warehouse AS w
+            t_in_warehouse AS iw
+            LEFT JOIN t_supplier AS s ON iw.supplierId = s.id
+            LEFT JOIN t_goods AS g ON iw.goodsId = g.id
+            LEFT JOIN t_warehouse AS w ON iw.warehouseId = w.id
         WHERE
-        iw.warehouseId = w.id
-        AND iw.goodsId = g.id
-        AND iw.supplierId = c.id
-        <if test="id != null">
-            AND iw.id = #{id}
-        </if>
-        <if test="otherId != null">
-            AND iw.supplierId = #{otherId}
-        </if>
-        <if test="name != null || name != ''">
-            AND iw.name LIKE CONCAT('%',#{name},'%')
-        </if>
+            iw.id != 0
+<!--        <if test="id != null">-->
+<!--            AND iw.id = #{id}-->
+<!--        </if>-->
+<!--        <if test="otherId != null">-->
+<!--            AND iw.supplierId = #{otherId}-->
+<!--        </if>-->
+<!--        <if test="name != null || name != ''">-->
+<!--            AND iw.name LIKE CONCAT('%',#{name},'%')-->
+<!--        </if>-->
         ORDER BY
-        iw.id
+            iw.id
     </select>
 </mapper>

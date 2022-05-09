@@ -62,12 +62,12 @@ public class Po implements Serializable {
     @ApiModelProperty(value = "应付金额")
     private Integer money;
 
-    @ApiModelProperty(value = "仓库ID")
-    private Integer warehouseId;
-
-    @ApiModelProperty(value = "仓库ID")
-    @TableField(exist = false)
-    private Warehouse warehouse;
+//    @ApiModelProperty(value = "仓库ID")
+//    private Integer warehouseId;
+//
+//    @ApiModelProperty(value = "仓库ID")
+//    @TableField(exist = false)
+//    private Warehouse warehouse;
 
     @ApiModelProperty(value = "地区")
     private Integer addressId;

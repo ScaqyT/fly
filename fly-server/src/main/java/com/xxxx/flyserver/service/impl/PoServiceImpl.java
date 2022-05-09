@@ -1,16 +1,16 @@
 package com.xxxx.flyserver.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.xxxx.flyserver.mapper.GoodsMapper;
 import com.xxxx.flyserver.mapper.InWarehouseMapper;
-import com.xxxx.flyserver.pojo.InWarehouse;
-import com.xxxx.flyserver.pojo.OrderSearch;
-import com.xxxx.flyserver.pojo.Po;
+import com.xxxx.flyserver.pojo.*;
 import com.xxxx.flyserver.mapper.PoMapper;
-import com.xxxx.flyserver.pojo.RespBean;
 import com.xxxx.flyserver.service.IPoService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -27,6 +27,8 @@ public class PoServiceImpl extends ServiceImpl<PoMapper, Po> implements IPoServi
     @Autowired
     private PoMapper poMapper;
     @Autowired
+    private GoodsMapper goodsMapper;
+    @Autowired
     private InWarehouseMapper inWarehouseMapper;
 
     @Override
@@ -38,20 +40,35 @@ public class PoServiceImpl extends ServiceImpl<PoMapper, Po> implements IPoServi
     public RespBean updatePo(Integer id) {
         Po po = poMapper.selectById(id);
         Integer state = po.getState();
+        if(state==1){
+            po.setState(4);
+            int i = poMapper.updateById(po);
+            if(i>0){
+                return RespBean.success("更新成功");
+            }
+        }
         if(state==4){
             po.setState(5);
             RespBean respBean = null;
+            Integer oid = po.getOid();
+            List<Goods> opgoods = goodsMapper.selectList(new QueryWrapper<Goods>().eq("oid", oid));
             InWarehouse inWarehouse = new InWarehouse();
             inWarehouse.setName(po.getName());
-            inWarehouse.setPrice(po.getMoney());
-            inWarehouse.setDate(po.getCreatedate());
             inWarehouse.setQuantity(po.getQuality());
             inWarehouse.setSupplierId(po.getSupplierId());
             inWarehouse.setOrderId(id);
             inWarehouse.setState(0);
-            inWarehouse.setWarehouseId(po.getWarehouseId());
+            int num = 0;
+            for(Goods good : opgoods){
+                Integer gid = good.getId();
+                inWarehouse.setDate(LocalDateTime.now());
+                inWarehouse.setGoodsId(gid);
+                int i = inWarehouseMapper.insert(inWarehouse);
+                if(i>0) {num++;}
+            }
+//            inWarehouse.setWarehouseId(po.getWarehouseId());
 
-            if(poMapper.updateById(po)>0){
+            if(num >= opgoods.size()){
                 if(inWarehouseMapper.insert(inWarehouse)>0){
                     respBean = new RespBean(200,"入库单创建成功",null);
                 }else{

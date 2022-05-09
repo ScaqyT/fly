@@ -11,10 +11,11 @@
         <result column="volume" property="volume" />
         <result column="quantity" property="quantity" />
         <result column="remark" property="remark" />
-        <result column="originId" property="originId" />
-        <result column="origin" property="origin" />
-        <result column="destinationId" property="destinationId" />
-        <result column="destination" property="destination" />
+        <result column="oid" property="oid"/>
+<!--        <result column="originId" property="originId" />-->
+<!--        <result column="origin" property="origin" />-->
+<!--        <result column="destinationId" property="destinationId" />-->
+<!--        <result column="destination" property="destination" />-->
     </resultMap>
 
     <!-- 通用查询结果列 -->
@@ -28,36 +29,36 @@
             <result column="gtname" property="name"/>
             <result column="gtparentId" property="parentId"/>
         </association>
-        <association property="o" javaType="com.xxxx.flyserver.pojo.Address">
-            <id column="oid" property="id"/>
-            <result column="oname" property="name"/>
-            <result column="oparentId" property="parentId"/>
-            <result column="otype" property="type"/>
-        </association>
-        <association property="d" javaType="com.xxxx.flyserver.pojo.Address">
-            <id column="did" property="id"/>
-            <result column="dname" property="name"/>
-            <result column="dparentId" property="parentId"/>
-            <result column="dtype" property="type"/>
-        </association>
+<!--        <association property="o" javaType="com.xxxx.flyserver.pojo.Address">-->
+<!--            <id column="oid" property="id"/>-->
+<!--            <result column="oname" property="name"/>-->
+<!--            <result column="oparentId" property="parentId"/>-->
+<!--            <result column="otype" property="type"/>-->
+<!--        </association>-->
+<!--        <association property="d" javaType="com.xxxx.flyserver.pojo.Address">-->
+<!--            <id column="did" property="id"/>-->
+<!--            <result column="dname" property="name"/>-->
+<!--            <result column="dparentId" property="parentId"/>-->
+<!--            <result column="dtype" property="type"/>-->
+<!--        </association>-->
      </resultMap>
     <select id="getAllGoods" resultMap="Goods">
         SELECT
                 g.*,
                 gt.id AS gtid,
                 gt.`name` AS gtname,
-                gt.parentId AS gtparentId,
-                a1.id as oid, a1.name as oname, a1.parentId as oparentId, a1.type as otype,
-                a2.id as did, a2.name as dname, a2.parentId as dparentId, a2.type as dtype
+                gt.parentId AS gtparentId
+<!--                a1.id as oid, a1.name as oname, a1.parentId as oparentId, a1.type as otype,-->
+<!--                a2.id as did, a2.name as dname, a2.parentId as dparentId, a2.type as dtype-->
         FROM
                 t_goods AS g,
-                t_goods_type AS gt,
-                t_address AS a1,
-                t_address AS a2
+                t_goods_type AS gt
+<!--                t_address AS a1,-->
+<!--                t_address AS a2-->
         WHERE
                 g.type = gt.id
-            AND g.originId = a1.id
-            AND g.destinationId = a2.id
+<!--            AND g.originId = a1.id-->
+<!--            AND g.destinationId = a2.id-->
         <if test="goodsId != null">
             AND g.id = #{goodsId}
         </if>

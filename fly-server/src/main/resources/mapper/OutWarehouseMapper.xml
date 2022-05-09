@@ -6,9 +6,9 @@
     <resultMap id="BaseResultMap" type="com.xxxx.flyserver.pojo.OutWarehouse">
         <id column="id" property="id" />
         <result column="customerId" property="customerId" />
-        <result column="name" property="name" />
-        <result column="price" property="price" />
-        <result column="quantity" property="quantity" />
+<!--        <result column="name" property="name" />-->
+<!--        <result column="price" property="price" />-->
+<!--        <result column="quantity" property="quantity" />-->
         <result column="date" property="date" />
         <result column="goodsId" property="goodsId" />
         <result column="warehouseId" property="warehouseId" />
@@ -40,28 +40,32 @@
      </resultMap>
     <select id="getOutWarehouse" resultMap="OutWarehouse">
         SELECT
-                ow.*,
-                c.id as cid, c.name as cname, c.phone as cphone, c.address as caddress,
-                g.id as gid, g.name as gname, g.quantity as gquatity,
-                w.id as wid, w.name as wname
+            ow.*,
+            c.id AS cid,
+            c.NAME AS cname,
+            c.phone AS cphone,
+            c.address AS caddress,
+            g.id AS gid,
+            g.NAME AS gname,
+            g.quantity AS gquatity,
+            w.id AS wid,
+            w.NAME AS wname
         FROM
-                t_out_warehouse AS ow,
-                t_customer AS c,
-                t_goods AS g,
-                t_warehouse AS w
+            t_out_warehouse AS ow
+            LEFT JOIN t_customer AS c ON ow.customerId = c.id
+            LEFT JOIN t_goods AS g ON ow.goodsId = g.id
+            LEFT JOIN t_warehouse AS w ON ow.warehouseId = w.id
         WHERE
-                ow.customerId = w.id
-          AND ow.goodsId = g.id
-          AND ow.customerId = c.id
-        <if test="id != null">
-            AND ow.id = #{id}
-        </if>
-        <if test="otherId != null">
-            AND ow.customerId = #{otherId}
-        </if>
-        <if test="name != null || name != ''">
-            AND ow.name LIKE CONCAT('%',#{name},'%')
-        </if>
+            ow.id != 0
+<!--        <if test="id != null">-->
+<!--            AND ow.id = #{id}-->
+<!--        </if>-->
+<!--        <if test="otherId != null">-->
+<!--            AND ow.customerId = #{otherId}-->
+<!--        </if>-->
+<!--        <if test="name != null || name != ''">-->
+<!--            AND ow.name LIKE CONCAT('%',#{name},'%')-->
+<!--        </if>-->
         ORDER BY
                 ow.id
     </select>

@@ -6,7 +6,6 @@
     <resultMap id="BaseResultMap" type="com.xxxx.flyserver.pojo.Orders">
         <id column="id" property="id" />
         <result column="number" property="number" />
-        <result column="goodsId" property="goodsId" />
         <result column="customerId" property="customerId" />
         <result column="state" property="state" />
         <result column="quality" property="quality" />
@@ -35,10 +34,10 @@
             <result column="cphone" property="phone"/>
             <result column="caddress" property="address"/>
         </association>
-        <association property="goods" javaType="com.xxxx.flyserver.pojo.Goods">
-            <id column="gid" property="id"/>
-            <result column="gname" property="name"/>
-        </association>
+<!--        <association property="goods" javaType="com.xxxx.flyserver.pojo.Goods">-->
+<!--            <id column="gid" property="id"/>-->
+<!--            <result column="gname" property="name"/>-->
+<!--        </association>-->
     </resultMap>
     <select id="getAllOrders" resultMap="Orders">
         SELECT
@@ -47,18 +46,18 @@
                 c.`name` AS cname,
                 c.phone AS cphone,
                 c.address AS caddress,
-                g.id AS gid,
-                g.name AS gname,
+<!--                g.id AS gid,-->
+<!--                g.name AS gname,-->
                 s.id AS sid,
                 s.`name` AS sname
         FROM
                 t_orders AS o,
                 t_customer AS c,
-                t_goods AS g,
+<!--                t_goods AS g,-->
                 t_state AS s
         WHERE
                 o.customerId = c.id
-          AND o.goodsId = g.id
+<!--          AND o.goodsId = g.id-->
           AND o.state = s.id
         <if test="orderId != null">
             AND o.id = #{orderId}

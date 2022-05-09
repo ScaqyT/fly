@@ -12,7 +12,7 @@
         <result column="name" property="name" />
         <result column="createdate" property="createdate" />
         <result column="money" property="money" />
-        <result column="warehouseId" property="warehouseId" />
+<!--        <result column="warehouseId" property="warehouseId" />-->
         <result column="addressId" property="addressId" />
         <result column="dAddress" property="dAddress" />
         <result column="chargeMode" property="chargeMode" />

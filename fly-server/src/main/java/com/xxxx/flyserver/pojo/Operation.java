@@ -71,13 +71,13 @@ public class Operation implements Serializable {
     private Chargemode c;
 
     @ApiModelProperty(value = "取货费")
-    private Integer qMoney;
+    private Integer QMoney;
 
     @ApiModelProperty(value = "送货费")
-    private Integer sMoney;
+    private Integer SMoney;
 
     @ApiModelProperty(value = "运输费")
-    private Integer yMoney;
+    private Integer YMoney;
 
     @ApiModelProperty(value = "状态")
     private Integer state;

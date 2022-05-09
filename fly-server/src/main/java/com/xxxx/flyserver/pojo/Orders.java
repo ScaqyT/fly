@@ -38,12 +38,12 @@ public class Orders implements Serializable {
     @ApiModelProperty(value = "订单号")
     private String number;
 
-    @ApiModelProperty(value = "货物ID")
-    private Integer goodsId;
-
-    @ApiModelProperty(value = "货物")
-    @TableField(exist = false)
-    private Goods goods;
+//    @ApiModelProperty(value = "货物ID")
+//    private Integer goodsId;
+//
+//    @ApiModelProperty(value = "货物")
+//    @TableField(exist = false)
+//    private Goods goods;
 
     @ApiModelProperty(value = "客户ID")
     private String customerId;

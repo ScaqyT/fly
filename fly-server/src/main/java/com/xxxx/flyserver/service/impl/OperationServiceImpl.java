@@ -1,16 +1,18 @@
 package com.xxxx.flyserver.service.impl;
 
-import com.xxxx.flyserver.mapper.CustomerMapper;
-import com.xxxx.flyserver.mapper.SupplierMapper;
+import com.alibaba.fastjson.JSON;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.xxxx.flyserver.mapper.*;
 import com.xxxx.flyserver.pojo.*;
-import com.xxxx.flyserver.mapper.OperationMapper;
 import com.xxxx.flyserver.service.IOperationService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -30,6 +32,8 @@ public class OperationServiceImpl extends ServiceImpl<OperationMapper, Operation
     @Autowired
     private SupplierMapper supplierMapper;
     @Autowired
+    private GoodsMapper goodsMapper;
+    @Autowired
     private RabbitTemplate rabbitTemplate;
 
     /**
@@ -45,11 +49,17 @@ public class OperationServiceImpl extends ServiceImpl<OperationMapper, Operation
 
     /**
      * 生成托运单
-     * @param operation
+     * @param map
      * @return
      */
     @Override
-    public RespBean addOperation(Operation operation) {
+    public RespBean addOperation(HashMap<String,Object> map) {
+        Object ope = map.get("operation");
+        Operation operation = JSON.parseObject(JSON.toJSONString(ope), Operation.class);
+        Object gl = map.get("goodsList");
+        List list = JSON.parseObject(JSON.toJSONString(gl), List.class);
+        List<Goods> goodsList = list;
+
         operationMapper.addOperation(operation);
         Integer cid = operation.getCustomerId();
         Customer customer = customerMapper.getCustomer(cid).get(0);
@@ -58,7 +68,12 @@ public class OperationServiceImpl extends ServiceImpl<OperationMapper, Operation
         operation.setCustomer(customer);
         operation.setSupplier(supplier);
         if (operation.getResult() == 1){
-
+            operation = (Operation) operationMapper.selectList(new QueryWrapper<Operation>().orderByDesc("id").last("limit 1"));
+            Integer oid = operation.getId();
+            for (Goods goods : goodsList){
+                goods.setOid(oid);
+                goodsMapper.insert(goods);
+            }
             return RespBean.success("添加成功");
         }
         return RespBean.error("添加失败");

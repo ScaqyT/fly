@@ -10,9 +10,9 @@
         <result column="price" property="price" />
         <result column="customerId" property="customerId" />
         <result column="chargeMode" property="chargeMode" />
-        <result column="qMoney" property="qMoney" />
-        <result column="sMoney" property="sMoney" />
-        <result column="yMoney" property="yMoney" />
+        <result column="qMoney" property="QMoney" />
+        <result column="sMoney" property="SMoney" />
+        <result column="yMoney" property="YMoney" />
         <result column="state" property="state"/>
         <result column="destination" property="destination"/>
         <result column="destinationId" property="destinationId"/>
@@ -85,7 +85,6 @@
                 t_chargemode AS c ,
                 t_customer AS cus,
                 t_supplier AS sup,
-                t_op_goods AS og,
                 t_goods AS g
         WHERE sup.id = o.supplierId
             AND cus.id = o.customerId

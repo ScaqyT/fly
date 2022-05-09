@@ -1,9 +1,8 @@
 package com.xxxx.flyserver.service.impl;
 
-import com.xxxx.flyserver.mapper.GoodsMapper;
-import com.xxxx.flyserver.mapper.OutWarehouseMapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.xxxx.flyserver.mapper.*;
 import com.xxxx.flyserver.pojo.*;
-import com.xxxx.flyserver.mapper.OrdersMapper;
 import com.xxxx.flyserver.service.IOrdersService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,8 +29,9 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, Orders> impleme
     private OrdersMapper ordersMapper;
     @Autowired
     private OutWarehouseMapper outWarehouseMapper;
-    @Autowired
-    private GoodsMapper goodsMapper;
+   @Autowired
+   private GoodsMapper goodsMapper;
+
 
     @Override
     public List<Orders> getAllOrders(OrderSearch orderSearch) {
@@ -42,27 +42,35 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, Orders> impleme
     public RespBean updateOrder(Integer id) {
         Orders orders = ordersMapper.selectById(id);
         Integer state = orders.getState();
-        if(state==2){
+        if(state < 5){
             orders.setState(state+1);
             RespBean outWhRespBean = null;
             OutWarehouse outWarehouse = null;
-            //订单状态是已发货，创建出库单
-            //以orders数据生成outWarehouse对象
-            outWarehouse = new OutWarehouse();
-            outWarehouse.setCustomerId(Integer.parseInt(orders.getCustomerId()));
-            outWarehouse.setDate(LocalDateTime.now());
-            outWarehouse.setGoodsId(orders.getGoodsId());
-            outWarehouse.setQuantity(orders.getQuality());
-            outWarehouse.setOrderId(id);
-            outWarehouse.setState(0);
-            outWarehouse.setWarehouseId(goodsMapper.selectById(orders.getGoodsId()).getOriginId());
-
-            if(ordersMapper.updateById(orders)>0){
-                if(outWarehouseMapper.insert(outWarehouse)>0){
+            if(state == 2){
+                //订单状态是已发货，创建出库单
+                //以orders数据生成outWarehouse对象
+                Integer oid = orders.getOid();
+                List<Goods> opgoods = goodsMapper.selectList(new QueryWrapper<Goods>().eq("oid", oid));
+                outWarehouse = new OutWarehouse();
+                outWarehouse.setCustomerId(Integer.parseInt(orders.getCustomerId()));
+//                outWarehouse.setQuantity(orders.getQuality());
+                outWarehouse.setOrderId(id);
+                outWarehouse.setState(0);
+                int num = 0;
+                for(Goods good : opgoods){
+                    Integer gid = good.getId();
+                    outWarehouse.setDate(LocalDateTime.now());
+                    outWarehouse.setGoodsId(gid);
+                    int i = outWarehouseMapper.insert(outWarehouse);
+                    if(i>0) {num++;}
+                }
+                if(num>=opgoods.size()){
                     outWhRespBean = new RespBean(200,"出库单创建成功",null);
                 }else{
-                    return RespBean.error("出库单创建失败");
+                    RespBean.error("出库单创建失败");
                 }
+            }
+            if(ordersMapper.updateById(orders)>0){
                 return RespBean.success("更新成功",outWhRespBean);
             }
         }
