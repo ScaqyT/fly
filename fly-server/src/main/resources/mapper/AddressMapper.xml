@@ -15,4 +15,23 @@
         id, name, parentId, type
     </sql>
 
+    <resultMap id="Address" type="com.xxxx.flyserver.pojo.Address" extends="BaseResultMap">
+        <collection property="children" ofType="com.xxxx.flyserver.pojo.Address">
+            <id column="id2" property="id"/>
+            <result column="name2" property="name"/>
+            <result column="parentId2" property="parentId"/>
+            <result column="type2" property="type"/>
+        </collection>
+    </resultMap>
+
+    <select id="getAddress" resultMap="Address">
+        select a1.*,
+               a2.id       as id2,
+               a2.name     as name2,
+               a2.parentId as parentId2,
+               a2.type     as type2
+        from t_address as a1,
+             t_address as a2
+        where a2.parentId = a1.id;
+    </select>
 </mapper>

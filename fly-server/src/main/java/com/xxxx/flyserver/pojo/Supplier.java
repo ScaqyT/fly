@@ -40,7 +40,7 @@ public class Supplier implements Serializable {
     @ApiModelProperty(value = "联系地址")
     private String address;
 
-    @ApiModelProperty(value = "邮箱")
-    private String mail;
+//    @ApiModelProperty(value = "邮箱")
+//    private String mail;
 
 }

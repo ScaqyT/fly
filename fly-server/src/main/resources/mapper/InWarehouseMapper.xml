@@ -28,11 +28,6 @@
             <result column="cphone" property="phone"/>
             <result column="caddress" property="address"/>
         </collection>
-        <collection property="goods" ofType="com.xxxx.flyserver.pojo.Goods">
-            <id column="gid" property="id"/>
-            <result column="gname" property="name"/>
-            <result column="gquatity" property="quantity"/>
-        </collection>
         <collection property="warehouse" ofType="com.xxxx.flyserver.pojo.Warehouse">
             <id column="wid" property="id"/>
             <result column="wname" property="name"/>
@@ -45,15 +40,11 @@
             s.NAME AS sname,
             s.phone AS sphone,
             s.address AS saddress,
-            g.id AS gid,
-            g.NAME AS gname,
-            g.quantity AS gquatity,
             w.id AS wid,
             w.NAME AS wname
         FROM
             t_in_warehouse AS iw
             LEFT JOIN t_supplier AS s ON iw.supplierId = s.id
-            LEFT JOIN t_goods AS g ON iw.goodsId = g.id
             LEFT JOIN t_warehouse AS w ON iw.warehouseId = w.id
         WHERE
             iw.id != 0
@@ -68,5 +59,28 @@
 <!--        </if>-->
         ORDER BY
             iw.id
+    </select>
+
+    <resultMap id="inGoods" type="com.xxxx.flyserver.pojo.InWarehouse">
+        <id column="iwid" property="id"/>
+        <collection property="goods" ofType="com.xxxx.flyserver.pojo.Goods">
+            <id column="id" property="id"/>
+            <result column="quantity" property="quantity"/>
+        </collection>
+    </resultMap>
+
+    <select id="getinGoods" resultMap="inGoods">
+        SELECT op2.iwid as owid,g.* FROM
+                (SELECT
+                         op.id AS opid,
+                         poid.iwid as iwid
+                 FROM
+                         ( SELECT iw.id as iwid,po.oid AS oid FROM t_in_warehouse AS iw, t_po AS po WHERE iw.orderId = po.id ) AS poid,
+                         t_operation AS op
+                 WHERE
+                         poid.oid = op.id) AS op2,
+                t_goods as g
+        WHERE
+                g.oid = op2.opid
     </select>
 </mapper>

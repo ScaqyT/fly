@@ -5,6 +5,7 @@ import com.xxxx.flyserver.mapper.*;
 import com.xxxx.flyserver.pojo.*;
 import com.xxxx.flyserver.service.IOrdersService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.xxxx.flyserver.util.UUIDUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,6 +32,12 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, Orders> impleme
     private OutWarehouseMapper outWarehouseMapper;
    @Autowired
    private GoodsMapper goodsMapper;
+   @Autowired
+   private OperationMapper operationMapper;
+   @Autowired
+   private DriverMapper driverMapper;
+   @Autowired
+   private CarMapper carMapper;
 
 
     @Override
@@ -53,21 +60,34 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, Orders> impleme
                 List<Goods> opgoods = goodsMapper.selectList(new QueryWrapper<Goods>().eq("oid", oid));
                 outWarehouse = new OutWarehouse();
                 outWarehouse.setCustomerId(Integer.parseInt(orders.getCustomerId()));
+                outWarehouse.setDate(LocalDateTime.now());
 //                outWarehouse.setQuantity(orders.getQuality());
+                outWarehouse.setName(orders.getName());
                 outWarehouse.setOrderId(id);
                 outWarehouse.setState(0);
-                int num = 0;
-                for(Goods good : opgoods){
-                    Integer gid = good.getId();
-                    outWarehouse.setDate(LocalDateTime.now());
-                    outWarehouse.setGoodsId(gid);
-                    int i = outWarehouseMapper.insert(outWarehouse);
-                    if(i>0) {num++;}
-                }
-                if(num>=opgoods.size()){
+//                int num = 0;
+//                for(Goods good : opgoods){
+//                    Integer gid = good.getId();
+//                    outWarehouse.setDate(LocalDateTime.now());
+//                    outWarehouse.setGoodsId(gid);
+//                    int i = outWarehouseMapper.insert(outWarehouse);
+//                    if(i>0) {num++;}
+//                }
+                int i = outWarehouseMapper.insert(outWarehouse);
+                if(i>=0){
                     outWhRespBean = new RespBean(200,"出库单创建成功",null);
                 }else{
                     RespBean.error("出库单创建失败");
+                }
+            }
+            if(state == 4){
+                {
+                    Integer did = orders.getDid();
+                    //更新司机
+                    Driver driver = driverMapper.selectById(did);
+                    driver.setState("空闲");
+                    driverMapper.updateById(driver);
+                    //TODO 更新汽车
                 }
             }
             if(ordersMapper.updateById(orders)>0){
@@ -102,11 +122,46 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, Orders> impleme
      */
     @Override
     public RespBean addOrder(Orders orders) {
-        orders.setState(1);
+        Integer oid = orders.getOid();
+        Operation operation = operationMapper.selectList(new QueryWrapper<Operation>().eq("id", oid)).get(0);
+        List<Goods> gList = goodsMapper.selectList(new QueryWrapper<Goods>().eq("oid", oid));
+        String number = UUIDUtils.getUUID16();
+        int quality = 0;
+        for (Goods good: gList){
+            quality += good.getQuantity();
+        }
+        orders.setQuality(quality);
+        orders.setState(2);
+        orders.setCreatedate(LocalDateTime.now());
+        orders.setChargeMode(operation.getChargeMode());
+        orders.setMoney(operation.getSMoney());
+        orders.setNumber(number);
+        orders.setCustomerId(String.valueOf(operation.getCustomerId()));
         int i = ordersMapper.insert(orders);
+
         if(i>0){
-            return RespBean.success("订单生成成功！");
+            {
+                Integer did = orders.getDid();
+                //更新司机
+                Driver driver = driverMapper.selectById(did);
+                driver.setState("忙碌");
+                driverMapper.updateById(driver);
+                //TODO 更新汽车
+            }
+            Orders orders2 = ordersMapper.selectList(new QueryWrapper<Orders>().eq("oid", oid)).get(0);
+            operation.setOrderId(orders2.getId());
+            RespBean respBean = null;
+            int i1 = operationMapper.updateById(operation);
+            if(i1>0){
+                respBean = new RespBean(200,"托运单更新成功",null);
+            }
+            return RespBean.success("订单生成成功！",respBean);
         }
         return RespBean.error("订单生成失败！");
+    }
+
+    @Override
+    public List<Operation> getNoOrderOperation() {
+        return operationMapper.getOrderOperation();
     }
 }

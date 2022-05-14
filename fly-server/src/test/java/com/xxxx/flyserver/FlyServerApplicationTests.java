@@ -14,6 +14,7 @@ import com.xxxx.flyserver.service.IOperationService;
 import com.xxxx.flyserver.util.JwtTokenUtil;
 import com.xxxx.flyserver.util.PageHelper;
 import com.xxxx.flyserver.util.RedisUtil;
+import com.xxxx.flyserver.util.UUIDUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -84,10 +85,8 @@ class FlyServerApplicationTests {
 //        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 //        String encode = passwordEncoder.encode("123");
 //        System.out.println(encode);
-        Integer i = null;
-        if(i==null){
-            System.out.println("i为空值");
-        }
+        String uuid16 = UUIDUtils.getUUID16();
+        System.out.println(uuid16);
     }
 
     @Test

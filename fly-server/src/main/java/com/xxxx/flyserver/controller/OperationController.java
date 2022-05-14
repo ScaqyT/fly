@@ -2,9 +2,7 @@ package com.xxxx.flyserver.controller;
 
 
 import com.xxxx.flyserver.pojo.*;
-import com.xxxx.flyserver.service.ICarService;
-import com.xxxx.flyserver.service.IDriverService;
-import com.xxxx.flyserver.service.IOperationService;
+import com.xxxx.flyserver.service.*;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -33,6 +31,13 @@ public class OperationController {
 
     @Autowired
     private OrdersController ordersController;
+
+    @Autowired
+    private IChargemodeService chargemodeService;
+
+    @Autowired
+    private IAddressService addressService;
+
 
 
     @ApiOperation(value = "获取托运单")
@@ -67,6 +72,18 @@ public class OperationController {
         OrderSearch orderSearch = new OrderSearch();
         orderSearch.setOid(oid);
         return ordersController.getAllOrders(orderSearch);
+    }
+
+    @ApiOperation(value = "获取计费方式")
+    @GetMapping("/chargemode")
+    public List<Chargemode> getChargemode(){
+        return chargemodeService.list();
+    }
+
+    @ApiOperation(value = "获取地区")
+    @GetMapping("/address")
+    public List<Address> getAddress(){
+        return addressService.getAddress();
     }
 
 }

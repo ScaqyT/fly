@@ -10,6 +10,7 @@ import com.xxxx.flyserver.pojo.Warehouse;
 import com.xxxx.flyserver.service.IEmployeeService;
 import com.xxxx.flyserver.service.ILocationService;
 import com.xxxx.flyserver.service.IWarehouseService;
+import com.xxxx.flyserver.util.RedisUtil;
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,8 @@ public class WarehouseController {
     private ILocationService locationService;
     @Autowired
     private IEmployeeService employeeService;
+    @Autowired
+    private RedisUtil redisUtil;
 
     @ApiOperation(value = "获取仓库信息")
     @GetMapping("/")
@@ -46,6 +49,7 @@ public class WarehouseController {
     @PostMapping("/")
     public RespBean addWarehouse(@RequestBody Warehouse warehouse){
         if(warehouseService.save(warehouse)){
+            redisUtil.del("warehouse");
             return RespBean.success("添加成功");
         }
         return RespBean.error("添加失败");
@@ -55,6 +59,7 @@ public class WarehouseController {
     @PutMapping("/")
     public RespBean updateWarehouse(@RequestBody Warehouse warehouse){
         if(warehouseService.updateById(warehouse)){
+            redisUtil.del("warehouse");
             return RespBean.success("更新成功");
         }
         return RespBean.error("更新失败");
@@ -64,6 +69,7 @@ public class WarehouseController {
     @DeleteMapping("/{id}")
     public RespBean deleteWarehouse(@PathVariable("id") Integer id){
         if(warehouseService.removeById(id)){
+            redisUtil.del("warehouse");
             return RespBean.success("删除成功");
         }
         return RespBean.error("删除失败");

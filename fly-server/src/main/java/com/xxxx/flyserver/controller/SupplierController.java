@@ -5,6 +5,7 @@ import com.xxxx.flyserver.pojo.Customer;
 import com.xxxx.flyserver.pojo.RespBean;
 import com.xxxx.flyserver.pojo.Supplier;
 import com.xxxx.flyserver.service.ISupplierService;
+import com.xxxx.flyserver.util.RedisUtil;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -25,7 +26,8 @@ public class SupplierController {
 
     @Autowired
     private ISupplierService supplierService;
-
+    @Autowired
+    private RedisUtil redisUtil;
 
     @ApiOperation(value = "获取供应商信息")
     @GetMapping("/")
@@ -37,6 +39,7 @@ public class SupplierController {
     @PostMapping("/")
     public RespBean addSupplier(@RequestBody Supplier supplier){
         if(supplierService.save(supplier)){
+            redisUtil.del("supplier");
             return RespBean.success("添加成功");
         }
         return RespBean.error("添加失败");
@@ -46,6 +49,7 @@ public class SupplierController {
     @PutMapping("/")
     public RespBean updateSupplier(@RequestBody Supplier supplier){
         if(supplierService.updateById(supplier)){
+            redisUtil.del("supplier");
             return RespBean.success("更新成功");
         }
         return RespBean.error("更新失败");
@@ -55,6 +59,7 @@ public class SupplierController {
     @DeleteMapping("/{id}")
     public RespBean deleteSupplier(@PathVariable("id") Integer id){
         if(supplierService.removeById(id)){
+            redisUtil.del("supplier");
             return RespBean.success("删除成功");
         }
         return RespBean.error("删除失败");

@@ -59,7 +59,7 @@ public class PoController {
     @ApiOperation(value = "获取未分配提货单的托运单")
     @GetMapping("/operation")
     public List<Operation> getNoPoOperation(){
-        return operationService.list(new QueryWrapper<Operation>().eq("poId",null));
+        return poService.getNoPoOperation();
     }
 
 }

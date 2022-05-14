@@ -1,5 +1,6 @@
 package com.xxxx.flyserver.service;
 
+import com.xxxx.flyserver.pojo.Operation;
 import com.xxxx.flyserver.pojo.OrderSearch;
 import com.xxxx.flyserver.pojo.Orders;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -24,4 +25,6 @@ public interface IOrdersService extends IService<Orders> {
     RespBean deleteOrder(Orders orders, Integer id);
 
     RespBean addOrder(Orders orders);
+
+    List<Operation> getNoOrderOperation();
 }

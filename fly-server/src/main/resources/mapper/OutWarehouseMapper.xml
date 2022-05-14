@@ -6,7 +6,7 @@
     <resultMap id="BaseResultMap" type="com.xxxx.flyserver.pojo.OutWarehouse">
         <id column="id" property="id" />
         <result column="customerId" property="customerId" />
-<!--        <result column="name" property="name" />-->
+        <result column="name" property="name" />
 <!--        <result column="price" property="price" />-->
 <!--        <result column="quantity" property="quantity" />-->
         <result column="date" property="date" />
@@ -28,11 +28,6 @@
             <result column="cphone" property="phone"/>
             <result column="caddress" property="address"/>
         </collection>
-        <collection property="goods" ofType="com.xxxx.flyserver.pojo.Goods">
-            <id column="gid" property="id"/>
-            <result column="gname" property="name"/>
-            <result column="gquatity" property="quantity"/>
-        </collection>
         <collection property="warehouse" ofType="com.xxxx.flyserver.pojo.Warehouse">
             <id column="wid" property="id"/>
             <result column="wname" property="name"/>
@@ -45,15 +40,11 @@
             c.NAME AS cname,
             c.phone AS cphone,
             c.address AS caddress,
-            g.id AS gid,
-            g.NAME AS gname,
-            g.quantity AS gquatity,
             w.id AS wid,
             w.NAME AS wname
         FROM
             t_out_warehouse AS ow
             LEFT JOIN t_customer AS c ON ow.customerId = c.id
-            LEFT JOIN t_goods AS g ON ow.goodsId = g.id
             LEFT JOIN t_warehouse AS w ON ow.warehouseId = w.id
         WHERE
             ow.id != 0
@@ -68,5 +59,28 @@
 <!--        </if>-->
         ORDER BY
                 ow.id
+    </select>
+
+    <resultMap id="outGoods" type="com.xxxx.flyserver.pojo.OutWarehouse">
+        <id column="owid" property="id"/>
+        <collection property="goods" ofType="com.xxxx.flyserver.pojo.Goods">
+            <id column="id" property="id"/>
+            <result column="quantity" property="quantity"/>
+        </collection>
+    </resultMap>
+
+    <select id="getOutGoods" resultMap="outGoods">
+        SELECT op2.owid as owid,g.* FROM
+                (SELECT
+                         op.id AS opid,
+                         ordid.owid as owid
+                 FROM
+                         ( SELECT ow.id as owid,ord.oid AS oid FROM t_out_warehouse AS ow, t_orders AS ord WHERE ow.orderId = ord.id ) AS ordid,
+                         t_operation AS op
+                 WHERE
+                         ordid.oid = op.id) AS op2,
+                t_goods as g
+        WHERE
+                g.oid = op2.opid
     </select>
 </mapper>

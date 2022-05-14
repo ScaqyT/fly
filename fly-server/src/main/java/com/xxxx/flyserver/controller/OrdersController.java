@@ -2,6 +2,7 @@ package com.xxxx.flyserver.controller;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.xxxx.flyserver.pojo.Operation;
 import com.xxxx.flyserver.pojo.OrderSearch;
 import com.xxxx.flyserver.pojo.Orders;
 import com.xxxx.flyserver.pojo.RespBean;
@@ -50,6 +51,12 @@ public class OrdersController {
     public RespBean deleteOrder(@PathVariable("id") Integer id){
         Orders orders = (Orders)ordersService.list(new QueryWrapper<Orders>().eq("id", id));
         return ordersService.deleteOrder(orders,id);
+    }
+
+    @ApiOperation(value = "获取未分配送货单的托运单")
+    @GetMapping("/operation")
+    public List<Operation> getNoPoOperation(){
+        return ordersService.getNoOrderOperation();
     }
 
 }

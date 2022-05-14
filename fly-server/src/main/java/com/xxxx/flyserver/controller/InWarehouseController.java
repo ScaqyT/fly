@@ -5,6 +5,7 @@ import com.xxxx.flyserver.pojo.*;
 import com.xxxx.flyserver.service.IInWarehouseService;
 import com.xxxx.flyserver.service.IOutWarehouseService;
 import com.xxxx.flyserver.service.IPoService;
+import com.xxxx.flyserver.util.RedisUtil;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -27,6 +28,8 @@ public class InWarehouseController {
     private IInWarehouseService inWarehouseService;
     @Autowired
     private IPoService poService;
+    @Autowired
+    private RedisUtil redisUtil;
 
     @ApiOperation(value = "获取入库单")
     @GetMapping("/")
@@ -59,6 +62,7 @@ public class InWarehouseController {
             Po po = poService.getById(orderId);
             po.setState(6);
             if(poService.updateById(po)){
+                redisUtil.del("inGoods");
                 return RespBean.success("入库成功");
             }
 
@@ -73,6 +77,12 @@ public class InWarehouseController {
             return RespBean.success("删除成功");
         }
         return RespBean.error("删除失败");
+    }
+
+    @ApiOperation(value = "获取入库总货物")
+    @GetMapping("/inGoods")
+    public Integer getOutGoods(){
+        return inWarehouseService.getOutGoods();
     }
 
 }

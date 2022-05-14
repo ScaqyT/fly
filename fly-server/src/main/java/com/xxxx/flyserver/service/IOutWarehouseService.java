@@ -18,4 +18,6 @@ import java.util.List;
 public interface IOutWarehouseService extends IService<OutWarehouse> {
 
     List<OutWarehouse> getOutWarehouse(OutInSearch outInSearch);
+
+    Integer getOutGoods();
 }

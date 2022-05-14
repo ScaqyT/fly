@@ -1,7 +1,11 @@
 package com.xxxx.flyserver.pojo;
 
+import com.alibaba.fastjson.annotation.JSONField;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
+import java.util.List;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -35,6 +39,11 @@ public class Address implements Serializable {
 
     @ApiModelProperty(value = "地区级别")
     private String type;
+
+    @ApiModelProperty(value = "子菜单")
+    @TableField(exist = false)
+    private List<Address> children;
+
 
 
 }

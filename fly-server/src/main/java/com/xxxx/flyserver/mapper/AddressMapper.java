@@ -3,6 +3,8 @@ package com.xxxx.flyserver.mapper;
 import com.xxxx.flyserver.pojo.Address;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
+import java.util.List;
+
 /**
  * <p>
  *  Mapper 接口
@@ -13,4 +15,5 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  */
 public interface AddressMapper extends BaseMapper<Address> {
 
+    List<Address> getAddress();
 }

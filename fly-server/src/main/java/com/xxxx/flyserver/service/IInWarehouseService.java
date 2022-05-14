@@ -17,4 +17,6 @@ import java.util.List;
 public interface IInWarehouseService extends IService<InWarehouse> {
 
     List<InWarehouse> getInWarehouse(OutInSearch outInSearch);
+
+    Integer getOutGoods();
 }

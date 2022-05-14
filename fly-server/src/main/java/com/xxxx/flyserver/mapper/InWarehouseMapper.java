@@ -17,4 +17,6 @@ import java.util.List;
 public interface InWarehouseMapper extends BaseMapper<InWarehouse> {
 
     List<InWarehouse> getInWarehouse(OutInSearch outInSearch);
+
+    List<InWarehouse> getinGoods();
 }

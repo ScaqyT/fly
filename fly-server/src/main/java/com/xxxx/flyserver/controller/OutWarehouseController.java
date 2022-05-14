@@ -4,6 +4,7 @@ package com.xxxx.flyserver.controller;
 import com.xxxx.flyserver.pojo.*;
 import com.xxxx.flyserver.service.IOrdersService;
 import com.xxxx.flyserver.service.IOutWarehouseService;
+import com.xxxx.flyserver.util.RedisUtil;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -26,6 +27,8 @@ public class OutWarehouseController {
     private IOutWarehouseService outWarehouseService;
     @Autowired
     private IOrdersService ordersService;
+    @Autowired
+    private RedisUtil redisUtil;
 
     @ApiOperation(value = "获取出库单")
     @GetMapping("/")
@@ -52,6 +55,7 @@ public class OutWarehouseController {
             Orders orders = ordersService.getById(outWarehouse.getOrderId());
             orders.setState(4);
             if(ordersService.updateById(orders)){
+                redisUtil.del("outGoods");
                 return RespBean.success("出库成功");
             }
         }
@@ -66,6 +70,12 @@ public class OutWarehouseController {
             return RespBean.success("删除成功");
         }
         return RespBean.error("删除失败");
+    }
+
+    @ApiOperation(value = "获取出库总货物")
+    @GetMapping("/outGoods")
+    public Integer getOutGoods(){
+        return outWarehouseService.getOutGoods();
     }
 
 }

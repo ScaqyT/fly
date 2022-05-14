@@ -83,4 +83,15 @@ public class Po implements Serializable {
 
     @ApiModelProperty(value = "司机ID")
     private Integer did;
+
+    @ApiModelProperty(value = "司机")
+    @TableField(exist = false)
+    private Driver driver;
+
+    @ApiModelProperty(value = "货车ID")
+    private Integer carId;
+
+    @ApiModelProperty(value = "货车")
+    @TableField(exist = false)
+    private Car car;
 }

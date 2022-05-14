@@ -18,6 +18,7 @@
         <result column="chargeMode" property="chargeMode" />
         <result column="oid" property="oid"/>
         <result column="did" property="did"/>
+        <result column="carId" property="carId"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
@@ -36,6 +37,14 @@
             <result column="suphone" property="phone"/>
             <result column="suaddress" property="address"/>
         </association>
+        <association property="driver" javaType="com.xxxx.flyserver.pojo.Driver">
+            <id column="did" property="id"/>
+            <result column="dname" property="name"/>
+        </association>
+        <association property="car" javaType="com.xxxx.flyserver.pojo.Car">
+            <id column="cid" property="id"/>
+            <result column="cname" property="name"/>
+        </association>
     </resultMap>
     <select id="getAllPo" resultMap="Po">
         SELECT
@@ -45,14 +54,23 @@
                 su.phone AS suphone,
                 su.address AS suaddress,
                 s.id    AS  sid,
-                s.name  AS  sname
+                s.name  AS  sname,
+                d.id AS did,
+                d.name AS dname,
+                c.id AS cid,
+                c.name AS cname
         FROM
                 t_po AS p,
                 t_supplier AS su,
-                t_state as s
+                t_state as s,
+                t_driver as d,
+                t_car as c
         WHERE
                 p.supplierId = su.id
         AND     p.state = s.id
+        AND     p.did = d.id
+        AND     p.carId = c.id
+
         <if test="orderId != null">
             AND p.id = #{orderId}
         </if>

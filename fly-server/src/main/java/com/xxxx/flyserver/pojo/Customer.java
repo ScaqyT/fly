@@ -40,8 +40,8 @@ public class Customer implements Serializable {
     @ApiModelProperty(value = "收货地址")
     private String address;
 
-    @ApiModelProperty(value = "邮箱")
-    private String mail;
+//    @ApiModelProperty(value = "邮箱")
+//    private String mail;
 
 
 }

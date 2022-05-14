@@ -7,6 +7,7 @@
         <id column="id" property="id" />
         <result column="number" property="number" />
         <result column="customerId" property="customerId" />
+        <result column="name" property="name"/>
         <result column="state" property="state" />
         <result column="quality" property="quality" />
         <result column="createdate" property="createdate" />
@@ -34,11 +35,16 @@
             <result column="cphone" property="phone"/>
             <result column="caddress" property="address"/>
         </association>
+        <association property="driver" javaType="com.xxxx.flyserver.pojo.Driver">
+            <id column="did" property="id"/>
+            <result column="dname" property="name"/>
+        </association>
 <!--        <association property="goods" javaType="com.xxxx.flyserver.pojo.Goods">-->
 <!--            <id column="gid" property="id"/>-->
 <!--            <result column="gname" property="name"/>-->
 <!--        </association>-->
     </resultMap>
+
     <select id="getAllOrders" resultMap="Orders">
         SELECT
                 o.*,
@@ -49,16 +55,20 @@
 <!--                g.id AS gid,-->
 <!--                g.name AS gname,-->
                 s.id AS sid,
-                s.`name` AS sname
+                s.`name` AS sname,
+                d.id AS did,
+                d.name AS dname
         FROM
                 t_orders AS o,
                 t_customer AS c,
 <!--                t_goods AS g,-->
-                t_state AS s
+                t_state AS s,
+                t_driver as d
         WHERE
                 o.customerId = c.id
 <!--          AND o.goodsId = g.id-->
           AND o.state = s.id
+          AND o.did = d.id
         <if test="orderId != null">
             AND o.id = #{orderId}
         </if>
@@ -69,4 +79,5 @@
             AND o.oid = #{oid}
         </if>
     </select>
+
 </mapper>

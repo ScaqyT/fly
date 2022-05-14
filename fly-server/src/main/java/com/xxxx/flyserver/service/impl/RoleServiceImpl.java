@@ -9,6 +9,7 @@ import com.xxxx.flyserver.mapper.RoleMapper;
 import com.xxxx.flyserver.service.IAdminRoleService;
 import com.xxxx.flyserver.service.IRoleService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.xxxx.flyserver.util.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,6 +32,10 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
     private RoleMapper roleMapper;
     @Autowired
     private MenuMapper menuMapper;
+    @Autowired
+    private AdminRoleMapper adminRoleMapper;
+    @Autowired
+    private RedisUtil redisUtil;
 
     /**
      * 添加角色信息
@@ -59,6 +64,10 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
         int rid = menuRoleMapper.delete(new QueryWrapper<MenuRole>().eq("rid", roleId));
         int i = roleMapper.deleteById(roleId);
         if(rid!=0&&i!=0){
+            List<AdminRole> ar = adminRoleMapper.selectList(new QueryWrapper<AdminRole>().eq("rid", roleId));
+            for(AdminRole adminRole:ar){
+                redisUtil.del("menu_"+adminRole.getAdminId());
+            }
             return RespBean.success("删除成功");
         }
         return RespBean.error("删除失败");
@@ -77,6 +86,11 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
         roleMapper.updateById(role);
         Integer result = menuRoleMapper.addMenusRole(mids, role.getId());
         if(result == mids.length){
+            //TODO
+            List<AdminRole> ar = adminRoleMapper.selectList(new QueryWrapper<AdminRole>().eq("rid", role.getId()));
+            for(AdminRole adminRole:ar){
+                redisUtil.del("menu_"+adminRole.getAdminId());
+            }
             return RespBean.success("更新成功");
         }
         return RespBean.error("更新失败");

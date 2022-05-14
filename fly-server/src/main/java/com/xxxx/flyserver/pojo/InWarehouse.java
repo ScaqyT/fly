@@ -13,6 +13,7 @@ import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * <p>
@@ -60,7 +61,7 @@ public class InWarehouse implements Serializable {
 
     @ApiModelProperty(value = "货物")
     @TableField(exist = false)
-    private Goods goods;
+    private List<Goods> goods;
 
     @ApiModelProperty(value = "仓库ID")
     private Integer warehouseId;

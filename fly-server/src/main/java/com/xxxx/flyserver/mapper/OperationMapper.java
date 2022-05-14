@@ -37,10 +37,13 @@ public interface OperationMapper extends BaseMapper<Operation> {
     /**
      * 删除车辆运营信息
      *
-     * @param operation
      * @return
      */
 //    void deleteOperation(Operation operation);
 
     List<Goods> getOperationWithGoods(@Param("oid") Integer oid);
+
+    List<Operation> getPoOperation();
+
+    List<Operation> getOrderOperation();
 }

@@ -32,9 +32,6 @@ public class Operation implements Serializable {
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
-    @ApiModelProperty(value = "车辆编号")
-    private Integer carId;
-
     @ApiModelProperty(value = "车辆")
     @TableField(exist = false)
     private Car car;

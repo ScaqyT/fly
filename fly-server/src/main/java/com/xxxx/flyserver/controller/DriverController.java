@@ -38,6 +38,7 @@ public class DriverController {
     @ApiOperation(value = "添加司机信息")
     @PostMapping("/")
     public RespBean addDriver(@RequestBody Driver driver){
+        driver.setState("空闲");
         if(driverService.save(driver)){
             return RespBean.success("添加成功");
         }

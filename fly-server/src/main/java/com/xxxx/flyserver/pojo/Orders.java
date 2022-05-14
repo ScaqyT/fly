@@ -52,6 +52,9 @@ public class Orders implements Serializable {
     @TableField(exist = false)
     private Customer customer;
 
+    @ApiModelProperty(value = "订单名称")
+    private String name;
+
     @ApiModelProperty(value = "订单状态")
     private Integer state;
 
@@ -83,4 +86,8 @@ public class Orders implements Serializable {
 
     @ApiModelProperty(value = "司机ID")
     private Integer did;
+
+    @ApiModelProperty(value = "司机")
+    @TableField(exist = false)
+    private Driver driver;
 }
